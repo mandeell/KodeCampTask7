@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from ..models import Student
+from ..models.student import Student
 
 
 def create_student(student: Student, db: Session) -> Student:

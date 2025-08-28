@@ -1,0 +1,15 @@
+[
+  {
+    "username": "admin",
+    "hashed_password": "$2a$12$rhUvfsF4Z8hZD79.6adeVulrppSyxVDlxw/cdV61Fv5aF58xZX5vm",
+    "email": "admin@admin.com",
+    "is_active": true
+  },
+
+   {
+    "username": "teacher",
+    "hashed_password": "$2a$12$a1aIf.wnM2d7qaX/abadcOtMDIA1LxvL1Q5xZ9PFvWi9QcGekxV1e",
+    "email": "teacher@teacher.com",
+    "is_active": true
+  }
+]
