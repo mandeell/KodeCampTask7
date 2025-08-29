@@ -1,5 +1,6 @@
+import time
 from typing import Generator
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
 from .database_setup import engine
@@ -23,7 +24,6 @@ def get_session() -> Generator[Session, None, None]:
     finally:
         session.close()
 
-
 def configure_cors(app: FastAPI) -> None:
     """Configure CORS middleware for the FastAPI app."""
     app.add_middleware(
@@ -33,3 +33,12 @@ def configure_cors(app: FastAPI) -> None:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+def response_time_setup(app: FastAPI) -> None:
+    @app.middleware("http")
+    async def add_response_time_header(request: Request, call_next):
+        start_time = time.time()
+        response = await call_next(request)
+        process_time = time.time() - start_time
+        response.headers["X-Process-Time"] =  f"{process_time:.4f} second"
+        return response
