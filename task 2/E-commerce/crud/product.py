@@ -65,3 +65,20 @@ def get_products(db: Session, skip: int = 0, limit: int = 10) -> List[Product]:
     """
 
     return db.query(Product).offset(skip).limit(limit).all()
+
+
+def update_product_stock(product_id: int, quantity_change: int, db: Session) -> Product:
+    """Update product stock by a certain amount (positive or negative)"""
+    product = get_product(product_id, db)
+    product.stock += quantity_change
+
+    if product.stock < 0:
+        raise HTTPException(status_code=400, detail="Stock cannot be negative")
+
+    try:
+        db.commit()
+        db.refresh(product)
+        return product
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Error updating stock")
