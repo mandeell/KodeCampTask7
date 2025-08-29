@@ -17,18 +17,25 @@ async def add_to_cart_endpoint(
         db: Session = Depends(get_session),
         current_user: User = Depends(get_current_user)
 ):
-    """Add item to cart"""
-    # Calculate total price (you'll need to get product price)
-    product = get_product(cart_item.product_id, db)
-    total_price = product.price * cart_item.quantity
-    
-    db_cart = Cart(
-        user_id=current_user.id,
-        product_id=cart_item.product_id,
-        quantity=cart_item.quantity,
-        total_price=total_price
-    )
-    return create_cart(db_cart, db)
+    """Add item to cart with stock validation"""
+    try:
+        # get product to calculate price
+        product = get_product(cart_item.product_id, db)
+        total_price = product.price * cart_item.quantity
+
+        db_cart = Cart(
+            user_id=current_user.id,
+            product_id=cart_item.product_id,
+            quantity=cart_item.quantity,
+            total_price=total_price
+        )
+        return create_cart(db_cart, db)
+    except HTTPException:
+        # rewrite HTTP Exceptions like insufficient stock
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="internal server error")
+
 
 @router.post("/checkout/", status_code=status.HTTP_200_OK)
 async def checkout_endpoint(
