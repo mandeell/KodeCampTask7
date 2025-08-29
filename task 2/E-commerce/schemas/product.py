@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from typing import Optional
 
 
@@ -16,6 +17,7 @@ class ProductUpdate(BaseModel):
 
 
 class ProductResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     name: str
     stock: int
